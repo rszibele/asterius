@@ -1063,10 +1063,10 @@ rtsMkHelper _ n con_sym =
 rtsMkBoolFunction _ =
   runEDSL "rts_mkBool" $ do
     setReturnTypes [I64]
-    [i] <- params [I64]
+    [i] <- params [I32]
     if'
-      [I64]
-      (eqZInt64 i)
+      [I32]
+      (eqZInt32 i)
       (emit $ symbol' "ghczmprim_GHCziTypes_False_closure" 1)
       (emit $ symbol' "ghczmprim_GHCziTypes_True_closure" 2)
 
@@ -1102,13 +1102,9 @@ unTagClosure p = p `andInt64` constI64 0xFFFFFFFFFFFFFFF8
 
 rtsGetBoolFunction _ =
   runEDSL "rts_getBool" $ do
-    setReturnTypes [I64]
+    setReturnTypes [I32]
     p <- param I64
-    emit $
-      extendUInt32 $
-      neInt32
-        (constI32 0)
-        (loadI32 (loadI64 (unTagClosure p) 0) offset_StgInfoTable_srt)
+    emit $ loadI32 (loadI64 (unTagClosure p) 0) offset_StgInfoTable_srt
 
 rtsGetDoubleFunction _ =
   runEDSL "rts_getDouble" $ do

@@ -132,8 +132,8 @@ marshalToFFIValueType (GHC.unLoc -> t) =
       | tv == GHC.occName GHC.boolTyConName ->
         pure
           FFI_VAL
-            { ffiWasmValueType = I64
-            , ffiJSValueType = F64
+            { ffiWasmValueType = I32
+            , ffiJSValueType = I32
             , hsTyCon = "Bool"
             , signed = False
             }
@@ -582,6 +582,7 @@ generateFFIExportLambda FFIExportDecl { ffiFunctionType = FFIFunctionType {..}
            in case t of
                 FFI_JSVAL ->
                   "this.context.stablePtrManager.getJSVal(" <> r <> ")"
+                FFI_VAL {hsTyCon = "Bool"} -> "Boolean(" <> r <> ")"
                 _ -> r
         _ -> error "Asterius.JSFFI.generateFFIExportLambda"
     ret_closure = "this.context.tsoManager.getTSOret(" <> tid <> ")"
