@@ -147,7 +147,6 @@ export function newAsteriusInstance(req) {
       HeapAlloc: modulify(__asterius_heapalloc),
       HeapBuilder: modulify(__asterius_heap_builder),
       Integer: modulify(__asterius_integer_manager),
-      MBlockAlloc: modulify(__asterius_mblockalloc),
       Memory: modulify(__asterius_memory),
       MemoryTrap: modulify(__asterius_memory_trap),
       Messages: modulify(__asterius_messages),
