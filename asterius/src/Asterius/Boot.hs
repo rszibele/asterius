@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StrictData #-}
 
@@ -27,12 +26,11 @@ import Language.Haskell.GHC.Toolkit.Compiler
 import Language.Haskell.GHC.Toolkit.Orphans.Show
 import Language.Haskell.GHC.Toolkit.Run (defaultConfig, ghcFlags, runCmm)
 import qualified Module as GHC
-import Prelude hiding (IO)
 import System.Directory
 import System.Environment
 import System.Exit
 import System.FilePath
-import System.IO hiding (IO)
+import System.IO
 import System.Process
 
 data BootArgs = BootArgs

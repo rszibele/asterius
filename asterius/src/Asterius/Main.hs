@@ -1,6 +1,5 @@
 {-# LANGUAGE OverloadedLists #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Asterius.Main
@@ -45,12 +44,11 @@ import Foreign
 import Language.WebAssembly.WireFormat
 import qualified Language.WebAssembly.WireFormat as Wasm
 import NPM.Parcel
-import Prelude hiding (IO)
 import System.Console.GetOpt
 import System.Directory
 import System.Environment.Blank
 import System.FilePath
-import System.IO hiding (IO)
+import System.IO
 import System.Process
 
 data Target

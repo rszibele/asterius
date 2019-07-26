@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Asterius.TypesConv
@@ -10,15 +9,12 @@ module Asterius.TypesConv
   , asmPrint
   ) where
 
-import Asterius.Internals
 import Asterius.Types
 import qualified Data.ByteString.Char8 as CBS
 import qualified Data.ByteString.Short as SBS
-import Data.List
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified GhcPlugins as GHC
-import Prelude hiding (IO)
 import qualified Pretty as GHC
 import System.IO (IOMode(WriteMode), withFile)
 

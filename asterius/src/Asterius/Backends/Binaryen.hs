@@ -1,6 +1,5 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS_GHC -Wno-overflowed-literals #-}
@@ -45,7 +44,6 @@ import Foreign hiding (void, withPool)
 import Foreign.C
 import GHC.Exts
 import Language.Haskell.GHC.Toolkit.Constants
-import Prelude hiding (IO)
 
 newtype MarshalError =
   UnsupportedExpression Expression

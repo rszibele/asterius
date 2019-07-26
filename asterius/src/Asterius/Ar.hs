@@ -1,5 +1,4 @@
 {-# LANGUAGE BangPatterns #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -8,12 +7,10 @@ module Asterius.Ar
   ) where
 
 import qualified Ar as GHC
-import Asterius.Internals
 import Asterius.Internals.Binary
 import Asterius.Types
 import Control.Exception
 import Data.List
-import Prelude hiding (IO)
 
 loadAr :: FilePath -> IO AsteriusModule
 loadAr p = do

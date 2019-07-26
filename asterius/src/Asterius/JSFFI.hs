@@ -3,7 +3,6 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StrictData #-}
 {-# LANGUAGE ViewPatterns #-}
@@ -36,8 +35,6 @@ import qualified GhcPlugins as GHC
 import qualified HsSyn as GHC
 import Language.Haskell.GHC.Toolkit.Compiler
 import qualified PrelNames as GHC
-import Prelude hiding (IO)
-import qualified Prelude
 import qualified TcRnTypes as GHC
 import Text.Parsec (anyChar, char, digit, parse, try)
 import Text.Parsec.String (Parser)
