@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedLists #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -416,11 +417,11 @@ switchI64 cond make_clauses =
                 clause_lbl <- newLabel
                 pure (clause_i, clause_lbl, clause_m)
             foldr
-              (\(_, clause_lbl, clause_m) tot_m -> do
+              (\(_, !clause_lbl, !clause_m) !tot_m -> do
                  blockWithLabel [] clause_lbl tot_m
                  clause_m)
               (foldr
-                 (\(clause_i, clause_lbl, _) br_m -> do
+                 (\(!clause_i, !clause_lbl, _) !br_m -> do
                     break' clause_lbl $ Just $ cond `eqInt64` constI64 clause_i
                     br_m)
                  (break' switch_def_lbl Nothing)

@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE TupleSections #-}
 
 module Asterius.Internals.Directory
@@ -16,7 +17,7 @@ listFilesRecursive = w []
       fds <- map (normalise . (bp </>)) <$> listDirectory bp
       tagged_fds <- for fds $ \fd -> (fd, ) <$> doesFileExist fd
       foldrM
-        (\(fd, is_f) acc' ->
+        (\(!fd, !is_f) !acc' ->
            if is_f
              then pure (fd : acc')
              else w acc' fd)

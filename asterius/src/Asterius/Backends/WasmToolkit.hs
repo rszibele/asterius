@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -229,7 +230,7 @@ makeLocalContext :: Module -> Function -> LocalContext
 makeLocalContext Module {} Function {..} =
   snd $
   foldl'
-    (\(i, LocalContext {..}) (orig_vt, orig_i) ->
+    (\(!i, LocalContext {..}) (!orig_vt, !orig_i) ->
        ( succ i
        , LocalContext
            { localCount =

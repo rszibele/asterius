@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -8,7 +9,6 @@ module Asterius.Passes.Relooper
 
 import Asterius.Internals
 import Asterius.Types
-import Data.Foldable
 import Data.List
 import qualified Data.Map.Strict as M
 
@@ -29,7 +29,7 @@ relooper RelooperRun {..} = result_expr
     exit_lbl = "__asterius_exit"
     (blocks_expr, last_block_residule_exprs) =
       M.foldlWithKey'
-        (\(tot_expr, residule_exprs) lbl RelooperBlock {..} ->
+        (\(!tot_expr, !residule_exprs) !lbl RelooperBlock {..} ->
            ( Block
                { name = lbl
                , bodys = tot_expr : residule_exprs
@@ -41,8 +41,8 @@ relooper RelooperRun {..} = result_expr
                  (case addBranches of
                     [] -> [Break {name = exit_lbl, breakCondition = Nothing}]
                     branches ->
-                      foldr'
-                        (\AddBranch {addBranchCondition = Just cond, to} e ->
+                      foldr
+                        (\AddBranch {addBranchCondition = Just cond, to} !e ->
                            If
                              { condition = cond
                              , ifTrue = set_block_lbl to
@@ -55,8 +55,8 @@ relooper RelooperRun {..} = result_expr
                               last branches)
                AddBlockWithSwitch {..} ->
                  [code, SetLocal {index = 1, value = condition}] <>
-                 (foldr'
-                    (\AddBranchForSwitch {to, indexes} e ->
+                 (foldr
+                    (\AddBranchForSwitch {to, indexes} !e ->
                        If
                          { condition =
                              foldl1'

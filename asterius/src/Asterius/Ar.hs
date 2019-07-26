@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -19,7 +20,7 @@ loadAr p = do
   GHC.Archive entries <- GHC.loadAr p
   evaluate $
     foldl'
-      (\acc GHC.ArchiveEntry {..} ->
+      (\(!acc) GHC.ArchiveEntry {..} ->
          case decodeMaybe filedata of
            Just m -> m <> acc
            _ -> acc)

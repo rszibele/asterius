@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
@@ -55,10 +56,10 @@ makeMemory AsteriusModule {..} sym_map last_addr =
   ( fromIntegral $
     (fromIntegral (unTag last_addr) `roundup` mblock_size) `quot` 65536
   , Map.foldrWithKey'
-      (\statics_sym ss@AsteriusStatics {..} statics_segs ->
+      (\(!statics_sym) ss@AsteriusStatics {..} !statics_segs ->
          fst $
-         foldr'
-           (\static (static_segs, static_tail_addr) ->
+         foldr
+           (\(!static) (!static_segs, !static_tail_addr) ->
               let flush_static_segs buf =
                     ( case static_segs of
                         DataSegment {..}:static_segs'

@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StrictData #-}
@@ -71,7 +72,7 @@ splitAllBlocks ffi_state sym vts r@RelooperRun {..}
     final_state =
       execState
         (M.foldlWithKey'
-           (\m k b -> splitSingleBlock ffi_state save_instrs k b *> m)
+           (\(!m) !k !b -> splitSingleBlock ffi_state save_instrs k b *> m)
            (pure ())
            blockMap)
         init_state
@@ -230,7 +231,7 @@ splitSingleBlock ffi_state save_instrs base_k base_block@RelooperBlock {..} =
                 }
 
 splitBlockBody :: FFIMarshalState -> Expression -> BlockChunks
-splitBlockBody FFIMarshalState {..} instrs = foldr' w (BlockChunks [] []) es
+splitBlockBody FFIMarshalState {..} instrs = foldr w (BlockChunks [] []) es
   where
     get_safe t =
       case AsteriusEntitySymbol . SBS.toShort <$>

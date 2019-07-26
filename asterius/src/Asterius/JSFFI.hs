@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE LambdaCase #-}
@@ -591,7 +592,7 @@ generateFFIExportLambda FFIExportDecl { ffiFunctionType = FFIFunctionType {..}
       | otherwise = "rts_eval"
     eval_closure =
       foldl'
-        (\acc (i, t) ->
+        (\(!acc) (!i, !t) ->
            "this.rts_apply(" <> acc <> ",this.rts_mk" <> getHsTyCon t <> "(" <>
            (let _i = "_" <> intDec i
              in case t of

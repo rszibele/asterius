@@ -1,3 +1,5 @@
+{-# LANGUAGE BangPatterns #-}
+
 module Asterius.Internals.Binary
   ( decodeMaybe
   , lazyMapPut
@@ -36,7 +38,7 @@ decodeMaybe buf =
 lazyMapPut :: (Binary k, Binary v) => Map k v -> Put
 lazyMapPut m =
   put (LMap.size m) *>
-  LMap.foldrWithKey' (\k v acc -> put k *> put (encode v) *> acc) mempty m
+  LMap.foldrWithKey' (\(!k) !v !acc -> put k *> put (encode v) *> acc) mempty m
 
 {-# INLINE lazyMapGet #-}
 lazyMapGet :: (Binary k, Binary v) => Get (Map k v)

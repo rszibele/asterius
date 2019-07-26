@@ -1,3 +1,4 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -116,7 +117,7 @@ mergeSymbols _ gc_sections verbose_err store_mod root_syms export_funcs
         o_acc_syms = i_staging_syms <> i_acc_syms
         (i_child_syms, o_m) =
           S.foldr'
-            (\i_staging_sym (i_child_syms_acc, o_m_acc) ->
+            (\(!i_staging_sym) (!i_child_syms_acc, !o_m_acc) ->
                case LM.lookup i_staging_sym (staticsMap store_mod) of
                  Just ss ->
                    ( collectAsteriusEntitySymbols ss i_child_syms_acc
