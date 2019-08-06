@@ -1,16 +1,6 @@
 
 let
   opts = {
-    # packageOverrides = pkgs: rec {
-    #   haskellPackages = pkgs.haskellPackages.override {
-    #     overrides = haskellPackagesNew: haskellPackagesOld: rec {
-    #       insert-ordered-containers = pkgs.haskell.lib.doJailbreak haskellPackagesOld.insert-ordered-containers;
-    #       these = pkgs.haskell.lib.doJailbreak haskellPackagesOld.these;
-    #       HaTeX = pkgs.haskell.lib.doJailbreak haskellPackagesOld.HaTeX;
-    #       wl-pprint-extras = pkgs.haskell.lib.doJailbreak haskellPackagesOld.wl-pprint-extras;
-    #     };
-    #   };
-    # };
   };
 
   pkgsPath = (builtins.fetchTarball {
@@ -41,17 +31,11 @@ pkgs.stdenv.mkDerivation {
     pkgs.nodejs
     pkgs.stack
     pkgs.nix
-
-    # (
-    # pkgs.haskellPackages.ghcWithPackages (hsPkgs: with hsPkgs;
-    #     [ parsers
-    #       trifecta
-    #       text
-    #     ])
-    # )
    ];
   shellHook = ''
     export NIX_PATH="nixpkgs=${pkgsPath}"
+
+    stack -v install asterius wabt
   '';
 }
 
