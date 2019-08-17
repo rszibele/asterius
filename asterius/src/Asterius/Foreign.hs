@@ -39,6 +39,8 @@ import TcType
 import TysPrim
 import Prelude hiding ((<>))
 
+import Language.Haskell.GHC.Toolkit.Orphans.Show ()
+
 type Binding = (Id, CoreExpr)
 
 asteriusDsForeigns
@@ -276,6 +278,7 @@ asteriusTcFImport
           arg_tys = mapMaybe binderRelevantType_maybe bndrs
           id = mkLocalId nm sig_ty
       imp_decl' <- asteriusTcCheckFIType arg_tys res_ty imp_decl
+      liftIO $ putStrLn $ "[INFO] asteriusTcFImport: sig_ty: " ++ show sig_ty ++ ", norm_sig_ty: " ++ show norm_sig_ty
       let fi_decl =
             ForeignImport
               { fd_name = L nloc id,
@@ -385,6 +388,7 @@ asteriusTcFExport
       (norm_co, norm_sig_ty, gres) <- normaliseFfiType sig_ty
       spec' <- asteriusTcCheckFEType norm_sig_ty spec
       id <- mkStableIdFromName nm sig_ty loc mkForeignExportOcc
+      liftIO $ putStrLn $ "[INFO] asteriusTcFExport: sig_ty: " ++ show sig_ty ++ ", norm_sig_ty: " ++ show norm_sig_ty
       return
         ( mkVarBind id rhs,
           ForeignExport
