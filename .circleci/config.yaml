@@ -1,2 +1,2 @@
 ghc-options:
-  "$everything": -O2 -fexpose-all-unfoldings
+  "$everything": -O2

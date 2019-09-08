@@ -49,7 +49,7 @@ jobs:
             git submodule update --init --recursive
             mkdir /root/.stack
             cp .circleci/config.yaml /root/.stack/
-            stack --no-terminal -j1 build --test --no-run-tests
+            stack --no-terminal -j2 build --test --no-run-tests
             stack --no-terminal exec ahc-boot
             rm /root/.stack/config.yaml
 
