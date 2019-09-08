@@ -43,7 +43,7 @@ RUN \
   apt install -y nodejs && \
   mkdir -p /root/.local/bin && \
   curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C /root/.local/bin '*/stack' && \
-  stack --no-terminal install asterius && \
+  stack --no-terminal install asterius wabt && \
   stack --no-terminal exec ahc-boot && \
   apt purge -y \
     automake \
@@ -57,11 +57,8 @@ RUN \
   apt autoremove --purge -y && \
   apt clean && \
   rm -rf \
+    /root/.stack/pantry \
     /root/.stack/programs/x86_64-linux/*.tar.xz \
     /var/lib/apt/lists/* \
     /tmp/* && \
-  mv /root/.stack/programs /tmp/ && \
-  rm -rf /root/.stack && \
-  mkdir /root/.stack && \
-  mv /tmp/programs /root/.stack/ && \
   node --version
