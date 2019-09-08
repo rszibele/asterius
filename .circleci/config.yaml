@@ -1,0 +1,2 @@
+ghc-options:
+  "$everything": -O2 -fexpose-all-unfoldings -fspecialise-aggressively -flate-specialise
