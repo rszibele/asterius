@@ -4,7 +4,7 @@ import Fib
 import Language.Haskell.TH.Syntax
 
 main :: IO ()
-main =
+main = do
   putStrLn
     $( do
          x <- lift $ fib 10
