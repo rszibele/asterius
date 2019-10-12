@@ -19,7 +19,6 @@ import Data.List
 import Data.Maybe
 import DsCCall
 import DsMonad
-import DsUtils
 import ErrUtils
 import ForeignCall
 import qualified GHC.LanguageExtensions as LangExt
@@ -363,67 +362,9 @@ isAnyTy ty =
 asteriusUnboxArg :: CoreExpr -> DsM (CoreExpr, CoreExpr -> CoreExpr)
 asteriusUnboxArg arg
   | isAnyTy arg_ty = return (arg, id)
-  | isPrimitiveType arg_ty = return (arg, id)
-  | Just (co, _rep_ty) <- topNormaliseNewType_maybe arg_ty =
-    asteriusUnboxArg (mkCastDs arg co)
-  | Just tc <- tyConAppTyCon_maybe arg_ty,
-    tc `hasKey` boolTyConKey = do
-    dflags <- getDynFlags
-    prim_arg <- newSysLocalDs intPrimTy
-    return
-      ( Var prim_arg,
-        \body ->
-          Case
-            ( mkWildCase
-                arg
-                arg_ty
-                intPrimTy
-                [ (DataAlt falseDataCon, [], mkIntLit dflags 0),
-                  (DataAlt trueDataCon, [], mkIntLit dflags 1)
-                ]
-            )
-            prim_arg
-            (exprType body)
-            [(DEFAULT, [], body)]
-      )
-  | is_product_type && data_con_arity == 1 = do
-    case_bndr <- newSysLocalDs arg_ty
-    prim_arg <- newSysLocalDs data_con_arg_ty1
-    return
-      ( Var prim_arg,
-        \body ->
-          Case
-            arg
-            case_bndr
-            (exprType body)
-            [(DataAlt data_con, [prim_arg], body)]
-      )
-  | is_product_type
-      && data_con_arity == 3
-      && isJust maybe_arg3_tycon
-      && ( arg3_tycon == byteArrayPrimTyCon
-             || arg3_tycon == mutableByteArrayPrimTyCon
-         ) = do
-    case_bndr <- newSysLocalDs arg_ty
-    vars@[_l_var, _r_var, arr_cts_var] <- newSysLocalsDs data_con_arg_tys
-    return
-      ( Var arr_cts_var,
-        \body ->
-          Case arg case_bndr (exprType body) [(DataAlt data_con, vars, body)]
-      )
-  | otherwise = do
-    l <- getSrcSpanDs
-    pprPanic "asteriusUnboxArg: " (ppr l <+> ppr arg_ty)
+  | otherwise = unboxArg arg
   where
     arg_ty = exprType arg
-    maybe_product_type = splitDataProductType_maybe arg_ty
-    is_product_type = isJust maybe_product_type
-    Just (_, _, data_con, data_con_arg_tys) = maybe_product_type
-    data_con_arity = dataConSourceArity data_con
-    (data_con_arg_ty1 : _) = data_con_arg_tys
-    (_ : _ : data_con_arg_ty3 : _) = data_con_arg_tys
-    maybe_arg3_tycon = tyConAppTyCon_maybe data_con_arg_ty3
-    Just arg3_tycon = maybe_arg3_tycon
 
 asteriusBoxResult :: Type -> DsM (Type, CoreExpr -> CoreExpr)
 asteriusBoxResult result_ty
