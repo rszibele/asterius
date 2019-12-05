@@ -164,8 +164,8 @@ markingsS = [
   ]
 
 
--- foreign import javascript "document.createElement('div').innerHtml = ${1}" showSVG' :: JSVal -> IO ()
-foreign import javascript "console.log(${1})" showSVG' :: JSVal -> IO ()
+foreign import javascript "document.body.appendChild(function () { const d = document.createElement('div'); d.innerHTML = ${1}; return d;}())" showSVG' :: JSVal -> IO ()
+--foreign import javascript "console.log(${1})" showSVG' :: JSVal -> IO ()
 
 
 main = do

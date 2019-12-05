@@ -5,4 +5,4 @@ main :: IO ()
 main = do
   args <- getArgs
   callProcess "ahc-link" $
-    ["--input-hs", "test/diagrams/SquareLimit.hs", "--run", "--verbose-err", "--binaryen"] <> args
+    ["--input-hs", "test/diagrams/Hilbert.hs", "--browser", "--verbose-err", "--binaryen"] <> args
