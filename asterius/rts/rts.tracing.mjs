@@ -3,7 +3,7 @@ export class Tracer {
     this.logger = logger;
     this.symbolLookupTable = {};
     for (const [k, v] of Object.entries(syms)) this.symbolLookupTable[v] = k;
-    Object.freeze(this);
+    Object.seal(this);
   }
 
   traceCmm(f) {

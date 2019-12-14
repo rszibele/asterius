@@ -7,7 +7,7 @@ export class HeapBuilder {
     this.heapAlloc = hpalloc;
     this.memory = m;
     this.jsvalManager = jsval_mgr;
-    Object.freeze(this);
+    Object.seal(this);
   }
 
   newHaskellList(elem_con_info, s, _last) {

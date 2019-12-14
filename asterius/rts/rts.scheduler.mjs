@@ -282,8 +282,10 @@ export class Scheduler {
    * Start the scheduler
    */
   run(exports) {
+    if (this.running) return;
+    this.running = true;
     exports.context.reentrancyGuard.enter(0);
-    return this.scheduler_loop(exports).then(
+    this.scheduler_loop(exports).then(
       () => {
         exports.context.reentrancyGuard.exit(0);
       },
