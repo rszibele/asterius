@@ -545,28 +545,104 @@ jobs:
               netlify deploy --dir=_build --message="$CIRCLE_SHA1"
             fi
 
+  asterius-darwin:
+    macos:
+      xcode: "11.2.1"
+    environment:
+      - ASTERIUS_BUILD_OPTIONS: -j4
+      - GHCRTS: -N4
+      - MAKEFLAGS: -j4
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            mkdir -p ~/.local/bin
+            mkdir ~/node
+            export PATH=~/.local/bin:~/node/bin:$PATH
+
+            brew install \
+              cmake \
+              gnu-tar
+
+            curl -L https://raw.githubusercontent.com/TerrorJack/node-fetcher/master/node-fetcher.py -o ~/.local/bin/node-fetcher
+            chmod u+x ~/.local/bin/node-fetcher
+            node-fetcher --channel release --version v13 --path ~/node --verbose
+
+            curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | gtar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+            stack --no-terminal update
+      - checkout
+      - run:
+          name: Initialize submodules
+          command: |
+            git submodule update --init --recursive
+      - run:
+          name: Boot
+          command: |
+            export PATH=~/.local/bin:~/node/bin:$PATH
+            stack --no-terminal -j4 build --test --no-run-tests
+            stack --no-terminal exec ahc-boot
+      - run:
+          name: Test asterius
+          command: |
+            export PATH=~/.local/bin:~/node/bin:$PATH
+            stack --no-terminal test asterius:fib
+            stack --no-terminal test asterius:jsffi
+            stack --no-terminal test asterius:array
+            stack --no-terminal test asterius:stableptr
+            stack --no-terminal test asterius:rtsapi
+            stack --no-terminal test asterius:teletype
+            stack --no-terminal test asterius:bytearray
+            stack --no-terminal test asterius:bigint
+            stack --no-terminal test asterius:todomvc
+            # stack --no-terminal test asterius:cloudflare
+            stack --no-terminal test asterius:exception
+            stack --no-terminal test asterius:regression60
+            stack --no-terminal test asterius:sizeof_md5context
+            stack --no-terminal test asterius:largenum
+            stack --no-terminal test asterius:fib --test-arguments="--no-gc-sections"
+            stack --no-terminal test asterius:fib --test-arguments="--binaryen --no-gc-sections"
+
+            stack --no-terminal test asterius:fib --test-arguments="--debug" > /dev/null
+            stack --no-terminal test asterius:jsffi --test-arguments="--debug" > /dev/null
+            stack --no-terminal test asterius:array --test-arguments="--debug" > /dev/null
+            stack --no-terminal test asterius:stableptr --test-arguments="--debug" > /dev/null
+            stack --no-terminal test asterius:rtsapi --test-arguments="--debug" > /dev/null
+            stack --no-terminal test asterius:teletype --test-arguments="--debug" > /dev/null
+            # stack --no-terminal test asterius:bytearray --test-arguments="--debug" > /dev/null
+            stack --no-terminal test asterius:bigint --test-arguments="--debug" > /dev/null
+            stack --no-terminal test asterius:exception --test-arguments="--debug" > /dev/null
+
+            stack --no-terminal test asterius:fib --test-arguments="--tail-calls"
+            stack --no-terminal test asterius:fib --test-arguments="--tail-calls --no-gc-sections"
+
+            stack --no-terminal test asterius:nomain
+            stack --no-terminal test asterius:nomain --test-arguments="--tail-calls"
+
+            stack --no-terminal test asterius:th
+
 workflows:
   version: 2
   build:
     jobs:
-      - asterius-boot
-      - asterius-test:
-          requires:
-            - asterius-boot
-      - asterius-test-cabal:
-          requires:
-            - asterius-boot
-      - asterius-test-ghc-testsuite:
-          requires:
-            - asterius-boot
-      - asterius-test-ghc-testsuite-yolo:
-          requires:
-            - asterius-boot
-      - asterius-test-ghc-testsuite-debug:
-          requires:
-            - asterius-boot
-      - asterius-test-ghc-testsuite-debug-yolo:
-          requires:
-            - asterius-boot
-      - asterius-build-wabt
-      - asterius-build-docs
+      # - asterius-boot
+      # - asterius-test:
+      #     requires:
+      #       - asterius-boot
+      # - asterius-test-cabal:
+      #     requires:
+      #       - asterius-boot
+      # - asterius-test-ghc-testsuite:
+      #     requires:
+      #       - asterius-boot
+      # - asterius-test-ghc-testsuite-yolo:
+      #     requires:
+      #       - asterius-boot
+      # - asterius-test-ghc-testsuite-debug:
+      #     requires:
+      #       - asterius-boot
+      # - asterius-test-ghc-testsuite-debug-yolo:
+      #     requires:
+      #       - asterius-boot
+      # - asterius-build-wabt
+      # - asterius-build-docs
+      - asterius-darwin

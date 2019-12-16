@@ -10,6 +10,7 @@ module Asterius.Boot
   )
 where
 
+import Ar
 import Asterius.BuildInfo
 import Asterius.Builtins
 import Asterius.CodeGen
@@ -21,6 +22,7 @@ import Control.Monad
 import Control.Monad.IO.Class
 import Data.IORef
 import Data.Maybe
+import Data.Traversable
 import qualified DynFlags as GHC
 import qualified GHC
 import Language.Haskell.GHC.Toolkit.BuildInfo
@@ -136,14 +138,8 @@ bootRTSCmm BootArgs {..} =
         )
       liftIO $ do
         obj_paths <- readIORef obj_paths_ref
-        tmpdir <- getTemporaryDirectory
-        (rsp_path, rsp_h) <- openTempFile tmpdir "ar.rsp"
-        hPutStr rsp_h $ unlines obj_paths
-        hClose rsp_h
-        callProcess
-          "ar"
-          ["-r", "-c", obj_topdir </> "rts" </> "libHSrts.a", '@' : rsp_path]
-        removeFile rsp_path
+        ar <- Archive <$> for obj_paths loadObj
+        writeGNUAr (obj_topdir </> "rts" </> "libHSrts.a") ar
   where
     rts_path = bootLibsPath </> "rts"
     obj_topdir = bootDir </> "asterius_lib"
