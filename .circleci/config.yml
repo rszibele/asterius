@@ -174,7 +174,7 @@ jobs:
               zlib-dev
             mkdir -p ~/.local/bin
             curl -L https://get.haskellstack.org/stable/linux-x86_64-static.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-            ~/.local/bin/stack --no-terminal --resolver lts-12 --system-ghc install \
+            ~/.local/bin/stack --no-terminal --system-ghc install \
               alex \
               happy \
               hscolour
@@ -211,7 +211,7 @@ jobs:
 
   macos:
     macos:
-      xcode: "11.2.1"
+      xcode: "11.3.0"
     environment:
       BRANCH: asterius-8.6
       JOBS: 4
