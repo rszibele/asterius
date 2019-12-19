@@ -63,7 +63,7 @@ jobs:
             make binary-dist
             mkdir /tmp/ghc-bindist
             mv *.tar.* /tmp/ghc-bindist/
-            sha256sum -b /tmp/ghc-bindist/* > /tmp/ghc-bindist/sha256.txt
+            (ls -l /tmp/ghc-bindist && sha256sum -b /tmp/ghc-bindist/*) > /tmp/ghc-bindist/sha256.txt
       - store_artifacts:
           path: /tmp/ghc-bindist
 
@@ -129,7 +129,7 @@ jobs:
             make binary-dist
             mkdir /tmp/ghc-bindist
             mv *.tar.* /tmp/ghc-bindist/
-            sha256sum -b /tmp/ghc-bindist/* > /tmp/ghc-bindist/sha256.txt
+            (ls -l /tmp/ghc-bindist && sha256sum -b /tmp/ghc-bindist/*) > /tmp/ghc-bindist/sha256.txt
       - store_artifacts:
           path: /tmp/ghc-bindist
 
@@ -205,7 +205,7 @@ jobs:
             make binary-dist
             mkdir /tmp/ghc-bindist
             mv *.tar.* /tmp/ghc-bindist/
-            sha256sum -b /tmp/ghc-bindist/* > /tmp/ghc-bindist/sha256.txt
+            (ls -l /tmp/ghc-bindist && sha256sum -b /tmp/ghc-bindist/*) > /tmp/ghc-bindist/sha256.txt
       - store_artifacts:
           path: /tmp/ghc-bindist
 
@@ -259,7 +259,7 @@ jobs:
             make binary-dist
             mkdir /tmp/ghc-bindist
             mv *.tar.* /tmp/ghc-bindist/
-            sha256sum -b /tmp/ghc-bindist/* > /tmp/ghc-bindist/sha256.txt
+            (ls -l /tmp/ghc-bindist && sha256sum -b /tmp/ghc-bindist/*) > /tmp/ghc-bindist/sha256.txt
       - store_artifacts:
           path: /tmp/ghc-bindist
 
