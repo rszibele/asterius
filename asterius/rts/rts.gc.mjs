@@ -269,7 +269,10 @@ export class GC {
             untagged_c + rtsConstants.offset_StgInd_indirectee
           )
         );
-        break;
+        // cannot simply break here, because in the case of IND closures
+        // dest_c must not be tagged with the current tag
+        this.memory.i64Store(untagged_c, Memory.setDynTag(dest_c, 1));
+        return dest_c;
       }
       case ClosureTypes.PAP: {
         const n_args = this.memory.i32Load(
