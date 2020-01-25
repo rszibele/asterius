@@ -47,9 +47,7 @@ jobs:
             git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
             git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
             cd /tmp
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
+            git clone --recurse-submodules --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
       - checkout
       - run:
           name: Compile GHC
@@ -114,9 +112,7 @@ jobs:
             git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
             git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
             cd /tmp
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
+            git clone --recurse-submodules --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
       - checkout
       - run:
           name: Compile GHC
@@ -191,9 +187,7 @@ jobs:
             git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
             git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
             cd /tmp
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
+            git clone --recurse-submodules --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
       - checkout
       - run:
           name: Compile GHC
@@ -246,9 +240,7 @@ jobs:
             git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
             git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
             cd /tmp
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
+            git clone --recurse-submodules --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
       - checkout
       - run:
           name: Compile GHC
@@ -313,9 +305,7 @@ jobs:
             git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
             git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
             cd /tmp
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
+            git clone --recurse-submodules --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
       - checkout
       - run:
           name: Compile GHC
@@ -380,9 +370,7 @@ jobs:
             git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
             git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
             cd /tmp
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
+            git clone --recurse-submodules --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
       - checkout
       - run:
           name: Compile GHC
@@ -457,9 +445,7 @@ jobs:
             git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
             git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
             cd /tmp
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
+            git clone --recurse-submodules --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
       - checkout
       - run:
           name: Compile GHC
@@ -512,9 +498,7 @@ jobs:
             git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
             git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
             cd /tmp
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
+            git clone --recurse-submodules --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
       - checkout
       - run:
           name: Compile GHC
