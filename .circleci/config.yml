@@ -39,6 +39,7 @@ jobs:
       - run:
           name: Initialize ghc repo
           command: |
+            git config --global url."https://gitlab.haskell.org/ghc/hsc2hs.git".insteadOf https://github.com/TerrorJack/hsc2hs.git
             git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
             git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
             git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
@@ -105,6 +106,7 @@ jobs:
       - run:
           name: Initialize ghc repo
           command: |
+            git config --global url."https://gitlab.haskell.org/ghc/hsc2hs.git".insteadOf https://github.com/TerrorJack/hsc2hs.git
             git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
             git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
             git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
@@ -181,6 +183,7 @@ jobs:
       - run:
           name: Initialize ghc repo
           command: |
+            git config --global url."https://gitlab.haskell.org/ghc/hsc2hs.git".insteadOf https://github.com/TerrorJack/hsc2hs.git
             git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
             git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
             git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
@@ -235,6 +238,7 @@ jobs:
       - run:
           name: Initialize ghc repo
           command: |
+            git config --global url."https://gitlab.haskell.org/ghc/hsc2hs.git".insteadOf https://github.com/TerrorJack/hsc2hs.git
             git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
             git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
             git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
@@ -263,57 +267,6 @@ jobs:
       - store_artifacts:
           path: /tmp/ghc-bindist
 
-  lambda:
-    docker:
-      - image: lambci/lambda:build-nodejs12.x
-    environment:
-      BRANCH: asterius-8.6
-      JOBS: 2
-      XZ_OPT: -9
-    steps:
-      - run:
-          name: Install dependencies
-          command: |
-            yum -y install \
-              gmp-devel \
-              libatomic_ops-devel \
-              ncurses-devel
-            mkdir -p ~/.local/bin
-            curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-            ~/.local/bin/stack --no-terminal install \
-              alex \
-              happy
-      - run:
-          name: Initialize ghc repo
-          command: |
-            git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
-            git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
-            git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
-            git config --global url."https://gitlab.haskell.org/ghc/libffi-tarballs.git".insteadOf https://github.com/TerrorJack/libffi-tarballs.git
-            git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
-            git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
-            mkdir /tmp/ghc-git
-            cd /tmp/ghc-git
-            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
-            cd ghc
-            git submodule update --init --recursive
-      - checkout
-      - run:
-          name: Compile GHC
-          no_output_timeout: 1h
-          command: |
-            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):$PATH
-            cp .circleci/build-lambda.mk /tmp/ghc-git/ghc/mk/build.mk
-            cd /tmp/ghc-git/ghc
-            ./boot
-            ./configure --prefix=/tmp/ghc
-            make -j$JOBS
-            make install
-            cd /tmp
-            tar cfJ ghc.tar.xz ghc
-      - store_artifacts:
-          path: /tmp/ghc.tar.xz
-
 workflows:
   version: 2
   build:
@@ -322,4 +275,3 @@ workflows:
       - standard
       - musl
       - macos
-      - lambda
