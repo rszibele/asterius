@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  tinfo6:
+  8.6-tinfo6:
     docker:
       - image: debian:sid
     environment:
@@ -68,7 +68,7 @@ jobs:
       - store_artifacts:
           path: /tmp/ghc-bindist
 
-  standard:
+  8.6-standard:
     docker:
       - image: debian:stretch
     environment:
@@ -135,7 +135,7 @@ jobs:
       - store_artifacts:
           path: /tmp/ghc-bindist
 
-  musl:
+  8.6-musl:
     docker:
       - image: alpine:edge
     environment:
@@ -212,7 +212,7 @@ jobs:
       - store_artifacts:
           path: /tmp/ghc-bindist
 
-  macos:
+  8.6-macos:
     macos:
       xcode: "11.3.0"
     environment:
@@ -267,11 +267,281 @@ jobs:
       - store_artifacts:
           path: /tmp/ghc-bindist
 
+  8.8-tinfo6:
+    docker:
+      - image: debian:sid
+    environment:
+      BRANCH: asterius-8.8
+      DEBIAN_FRONTEND: noninteractive
+      JOBS: 2
+      XZ_OPT: -9
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apt update
+            apt full-upgrade -y
+            apt install -y \
+              automake \
+              build-essential \
+              curl \
+              gawk \
+              git \
+              libffi-dev \
+              libgmp-dev \
+              libncurses-dev \
+              libnuma-dev \
+              libtool-bin \
+              pkg-config \
+              python3-sphinx \
+              xz-utils \
+              zlib1g-dev
+            mkdir -p ~/.local/bin
+            curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+            ~/.local/bin/stack --no-terminal install \
+              alex \
+              happy \
+              hscolour
+      - run:
+          name: Initialize ghc repo
+          command: |
+            git config --global url."https://gitlab.haskell.org/ghc/hsc2hs.git".insteadOf https://github.com/TerrorJack/hsc2hs.git
+            git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
+            git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
+            git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
+            git config --global url."https://gitlab.haskell.org/ghc/libffi-tarballs.git".insteadOf https://github.com/TerrorJack/libffi-tarballs.git
+            git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
+            git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
+            cd /tmp
+            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
+            cd ghc
+            git submodule update --init --recursive
+      - checkout
+      - run:
+          name: Compile GHC
+          no_output_timeout: 1h
+          command: |
+            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):$PATH
+            mv .circleci/build.mk /tmp/ghc/mk/
+            cd /tmp/ghc
+            ./boot
+            ./configure
+            make -j$JOBS
+            make binary-dist
+            mkdir /tmp/ghc-bindist
+            mv *.tar.* /tmp/ghc-bindist/
+            (ls -l /tmp/ghc-bindist && sha256sum -b /tmp/ghc-bindist/*) > /tmp/ghc-bindist/sha256.txt
+      - store_artifacts:
+          path: /tmp/ghc-bindist
+
+  8.8-standard:
+    docker:
+      - image: debian:stretch
+    environment:
+      BRANCH: asterius-8.8
+      DEBIAN_FRONTEND: noninteractive
+      JOBS: 2
+      XZ_OPT: -9
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apt update
+            apt full-upgrade -y
+            apt install -y \
+              automake \
+              build-essential \
+              curl \
+              gawk \
+              git \
+              libffi-dev \
+              libgmp-dev \
+              libncurses-dev \
+              libnuma-dev \
+              libtool-bin \
+              pkg-config \
+              python3-sphinx \
+              xz-utils \
+              zlib1g-dev
+            mkdir -p ~/.local/bin
+            curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+            ~/.local/bin/stack --no-terminal install \
+              alex \
+              happy \
+              hscolour
+      - run:
+          name: Initialize ghc repo
+          command: |
+            git config --global url."https://gitlab.haskell.org/ghc/hsc2hs.git".insteadOf https://github.com/TerrorJack/hsc2hs.git
+            git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
+            git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
+            git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
+            git config --global url."https://gitlab.haskell.org/ghc/libffi-tarballs.git".insteadOf https://github.com/TerrorJack/libffi-tarballs.git
+            git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
+            git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
+            cd /tmp
+            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
+            cd ghc
+            git submodule update --init --recursive
+      - checkout
+      - run:
+          name: Compile GHC
+          no_output_timeout: 1h
+          command: |
+            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):$PATH
+            mv .circleci/build.mk /tmp/ghc/mk/
+            cd /tmp/ghc
+            ./boot
+            ./configure
+            make -j$JOBS
+            make binary-dist
+            mkdir /tmp/ghc-bindist
+            mv *.tar.* /tmp/ghc-bindist/
+            (ls -l /tmp/ghc-bindist && sha256sum -b /tmp/ghc-bindist/*) > /tmp/ghc-bindist/sha256.txt
+      - store_artifacts:
+          path: /tmp/ghc-bindist
+
+  8.8-musl:
+    docker:
+      - image: alpine:edge
+    environment:
+      BRANCH: asterius-8.8
+      JOBS: 2
+      XZ_OPT: -9
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+            apk update --no-progress
+            apk upgrade --no-progress
+            apk add --no-progress \
+              autoconf \
+              automake \
+              binutils-gold \
+              bzip2 \
+              coreutils \
+              curl \
+              file \
+              findutils \
+              g++ \
+              gawk \
+              ghc \
+              git \
+              gzip \
+              libtool \
+              musl-dev \
+              ncurses-dev \
+              numactl-dev \
+              openssh \
+              patch \
+              py3-sphinx \
+              sed \
+              tar \
+              xz \
+              zlib-dev
+            mkdir -p ~/.local/bin
+            curl -L https://get.haskellstack.org/stable/linux-x86_64-static.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+            ~/.local/bin/stack --no-terminal --system-ghc install \
+              alex \
+              happy \
+              hscolour
+      - run:
+          name: Initialize ghc repo
+          command: |
+            git config --global url."https://gitlab.haskell.org/ghc/hsc2hs.git".insteadOf https://github.com/TerrorJack/hsc2hs.git
+            git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
+            git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
+            git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
+            git config --global url."https://gitlab.haskell.org/ghc/libffi-tarballs.git".insteadOf https://github.com/TerrorJack/libffi-tarballs.git
+            git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
+            git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
+            cd /tmp
+            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
+            cd ghc
+            git submodule update --init --recursive
+      - checkout
+      - run:
+          name: Compile GHC
+          no_output_timeout: 1h
+          command: |
+            export PATH=~/.local/bin:$PATH
+            mv .circleci/build.mk /tmp/ghc/mk/
+            cd /tmp/ghc
+            ./boot
+            ./configure --disable-ld-override
+            make -j$JOBS
+            make binary-dist
+            mkdir /tmp/ghc-bindist
+            mv *.tar.* /tmp/ghc-bindist/
+            (ls -l /tmp/ghc-bindist && sha256sum -b /tmp/ghc-bindist/*) > /tmp/ghc-bindist/sha256.txt
+      - store_artifacts:
+          path: /tmp/ghc-bindist
+
+  8.8-macos:
+    macos:
+      xcode: "11.3.0"
+    environment:
+      BRANCH: asterius-8.8
+      JOBS: 4
+      XZ_OPT: -9
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            brew update
+            brew upgrade
+            brew install \
+              coreutils \
+              gnu-tar \
+              sphinx-doc
+            mkdir -p ~/.local/bin
+            curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | gtar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+            ~/.local/bin/stack --no-terminal install \
+              alex \
+              happy \
+              hscolour
+      - run:
+          name: Initialize ghc repo
+          command: |
+            git config --global url."https://gitlab.haskell.org/ghc/hsc2hs.git".insteadOf https://github.com/TerrorJack/hsc2hs.git
+            git config --global url."https://gitlab.haskell.org/ghc/packages/".insteadOf https://github.com/TerrorJack/packages/
+            git config --global url."https://gitlab.haskell.org/ghc/haddock.git".insteadOf https://github.com/TerrorJack/haddock.git
+            git config --global url."https://gitlab.haskell.org/ghc/nofib.git".insteadOf https://github.com/TerrorJack/nofib.git
+            git config --global url."https://gitlab.haskell.org/ghc/libffi-tarballs.git".insteadOf https://github.com/TerrorJack/libffi-tarballs.git
+            git config --global url."https://gitlab.haskell.org/ghc/gmp-tarballs.git".insteadOf https://github.com/TerrorJack/gmp-tarballs.git
+            git config --global url."https://gitlab.haskell.org/ghc/arcanist-external-json-linter.git".insteadOf https://github.com/TerrorJack/arcanist-external-json-linter.git
+            cd /tmp
+            git clone --branch $BRANCH --depth=1 https://github.com/TerrorJack/ghc.git
+            cd ghc
+            git submodule update --init --recursive
+      - checkout
+      - run:
+          name: Compile GHC
+          no_output_timeout: 1h
+          command: |
+            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):/usr/local/opt/sphinx-doc/bin:$PATH
+            mv .circleci/build-macos.mk /tmp/ghc/mk/build.mk
+            cd /tmp/ghc
+            ./boot
+            ./configure
+            make -j$JOBS
+            make binary-dist
+            mkdir /tmp/ghc-bindist
+            mv *.tar.* /tmp/ghc-bindist/
+            (ls -l /tmp/ghc-bindist && sha256sum -b /tmp/ghc-bindist/*) > /tmp/ghc-bindist/sha256.txt
+      - store_artifacts:
+          path: /tmp/ghc-bindist
+
 workflows:
   version: 2
   build:
     jobs:
-      - tinfo6
-      - standard
-      - musl
-      - macos
+      - 8.6-tinfo6
+      - 8.6-standard
+      - 8.6-musl
+      - 8.6-macos
+      - 8.8-tinfo6
+      - 8.8-standard
+      - 8.8-musl
+      - 8.8-macos
