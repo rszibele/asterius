@@ -34,8 +34,7 @@ jobs:
             curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
             ~/.local/bin/stack --no-terminal install \
               alex \
-              happy \
-              hscolour
+              happy
       - run:
           name: Initialize ghc repo
           command: |
@@ -99,8 +98,7 @@ jobs:
             curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
             ~/.local/bin/stack --no-terminal install \
               alex \
-              happy \
-              hscolour
+              happy
       - run:
           name: Initialize ghc repo
           command: |
@@ -174,8 +172,7 @@ jobs:
             curl -L https://get.haskellstack.org/stable/linux-x86_64-static.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
             ~/.local/bin/stack --no-terminal --system-ghc install \
               alex \
-              happy \
-              hscolour
+              happy
       - run:
           name: Initialize ghc repo
           command: |
@@ -227,8 +224,7 @@ jobs:
             curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | gtar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
             ~/.local/bin/stack --no-terminal install \
               alex \
-              happy \
-              hscolour
+              happy
       - run:
           name: Initialize ghc repo
           command: |
@@ -246,7 +242,7 @@ jobs:
           name: Compile GHC
           no_output_timeout: 1h
           command: |
-            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):/usr/local/opt/sphinx-doc/bin:$PATH
+            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):$PATH
             mv .circleci/build-macos.mk /tmp/ghc/mk/build.mk
             cd /tmp/ghc
             ./boot
@@ -292,8 +288,7 @@ jobs:
             curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
             ~/.local/bin/stack --no-terminal install \
               alex \
-              happy \
-              hscolour
+              happy
       - run:
           name: Initialize ghc repo
           command: |
@@ -357,8 +352,7 @@ jobs:
             curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
             ~/.local/bin/stack --no-terminal install \
               alex \
-              happy \
-              hscolour
+              happy
       - run:
           name: Initialize ghc repo
           command: |
@@ -432,8 +426,7 @@ jobs:
             curl -L https://get.haskellstack.org/stable/linux-x86_64-static.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
             ~/.local/bin/stack --no-terminal --system-ghc install \
               alex \
-              happy \
-              hscolour
+              happy
       - run:
           name: Initialize ghc repo
           command: |
@@ -485,8 +478,7 @@ jobs:
             curl -L https://get.haskellstack.org/stable/osx-x86_64.tar.gz | gtar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
             ~/.local/bin/stack --no-terminal install \
               alex \
-              happy \
-              hscolour
+              happy
       - run:
           name: Initialize ghc repo
           command: |
@@ -504,7 +496,7 @@ jobs:
           name: Compile GHC
           no_output_timeout: 1h
           command: |
-            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):/usr/local/opt/sphinx-doc/bin:$PATH
+            export PATH=~/.local/bin:$(~/.local/bin/stack path --compiler-bin):$PATH
             mv .circleci/build-macos.mk /tmp/ghc/mk/build.mk
             cd /tmp/ghc
             ./boot
