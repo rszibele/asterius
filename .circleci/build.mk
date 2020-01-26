@@ -10,4 +10,3 @@ SplitSections             = YES
 BUILD_SPHINX_HTML         = YES
 BUILD_SPHINX_PDF          = NO
 HADDOCK_DOCS              = YES
-EXTRA_HADDOCK_OPTS        += --quickjump --hyperlinked-source
