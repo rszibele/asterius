@@ -1077,6 +1077,7 @@ ahc-cabal v1-install -j$jobs --keep-going --prefix=$ASTERIUS_LIB_DIR --package-d
   mime-types \
   minimal-configuration \
   minimorph \
+  minio-hs \
   miniutter \
   mintty \
   missing-foreign \
