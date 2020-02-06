@@ -38,6 +38,14 @@ class Posix {
   }
 }
 
+class Process {
+  runInteractiveProcess() {
+    throw WebAssembly.RuntimeError(
+      "Unsupported rts interface: runInteractiveProcess"
+    );
+  }
+}
+
 export default {
   /**
    * A custom Time interface, used in {@link TimeCBits}.
@@ -74,5 +82,6 @@ export default {
      */
     resolution: 1000000
   },
-  posix: Posix
+  posix: Posix,
+  process: Process
 };
