@@ -91,7 +91,32 @@ export class GC {
      * @name GC#liveJSVals
      */
     this.liveJSVals = new Set();
-    Object.freeze(this);
+    // AC
+    this.majorHeapBitset = undefined;
+    this.rememberedSet = [];
+    /**
+     * if this.major = true, then we're collecting all generations
+     */
+    this.major = false;
+    // AC
+    // Object.freeze(this);
+  }
+
+  init() {
+    // AC
+    // this.majorHeapBitset = this.memory.liveBitset;
+    this.majorHeapBitset = 0n;
+  }
+
+  updateRemembSetPushClosure(p) {
+    console.log("dirty_MUT_VAR", p);
+    throw WebAssembly.RuntimeError("dirty_MUT_VAR: stub.");
+    this.rememberedSet.push(p);
+  }
+
+  die() {
+    console.log("DYING");
+    throw WebAssembly.RuntimeError("die");
   }
 
   /**
@@ -248,8 +273,22 @@ export class GC {
       this.liveJSVals.add(Number(c));
       return c;
     }
+
     const tag = Memory.getDynTag(c),
       untagged_c = Memory.unDynTag(c);
+
+    // AC
+    const mblock = BigInt(c) & BigInt(0xfff00000);
+    // console.log(1n, c, this.majorHeapBitset, (c >> 20));
+    // console.log(this.majorHeapBitset,  BigInt(Memory.unTag(c)), BigInt(23));
+    if (this.majorHeapBitset >> (mblock >> BigInt(20)) == 1n) {
+      // in the major heap, ignore
+      // throw WebAssembly.RuntimeError("aaa");
+      // this.liveMBlocks.add((BigInt(c) & 0xffffffff00000000n) + mblock + BigInt(rtsConstants.offset_first_bdescr));
+      this.liveMBlocks.add(bdescr(untagged_c));
+      return c;
+    }
+
     let info = Number(this.memory.i64Load(untagged_c));
 
     if (info % 2) {
@@ -915,15 +954,15 @@ export class GC {
    * Performs garbage collection, using scheduler Thread State Objects (TSOs) as roots.
    */
   performGC() {
-    if (this.yolo || this.heapAlloc.liveSize() < this.gcThreshold) {
-      // Garbage collection is skipped. This happens in yolo mode,
-      // or when the total number of "live" MBlocks is below the given threshold
-      // (by "live", we mean allocated and not yet freed - see HeapAlloc.liveSize).
-      // This avoids a lot of GC invocations
-      // (see {@link https://github.com/tweag/asterius/pull/379}).
-      this.updateNursery();
-      return;
-    }
+    // if (this.yolo || this.heapAlloc.liveSize() < this.gcThreshold) {
+    //   // Garbage collection is skipped. This happens in yolo mode,
+    //   // or when the total number of "live" MBlocks is below the given threshold
+    //   // (by "live", we mean allocated and not yet freed - see HeapAlloc.liveSize).
+    //   // This avoids a lot of GC invocations
+    //   // (see {@link https://github.com/tweag/asterius/pull/379}).
+    //   this.updateNursery();
+    //   return;
+    // }
     this.reentrancyGuard.enter(1);
     this.heapAlloc.initUnpinned();
 
@@ -970,6 +1009,7 @@ export class GC {
     // mark unused MBlocks
     this.heapAlloc.handleLiveness(this.liveMBlocks, this.deadMBlocks);
     // allocate a new nursery
+    this.majorHeapBitset = this.memory.liveBitset; // AC
     this.updateNursery();
     // garbage collect unused JSVals
     this.stablePtrManager.preserveJSVals(this.liveJSVals);

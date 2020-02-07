@@ -170,8 +170,10 @@ rtsAsteriusModule opts =
     <> fromJSStringFunction opts
     <> fromJSArrayFunction opts
     <> threadPausedFunction opts
+    <> updateRemembSetPushClosureFunction opts
     <> dirtyMutVarFunction opts
     <> dirtyMVarFunction opts
+    <> updateMVarFunction opts
     <> dirtyStackFunction opts
     <> recordClosureMutatedFunction opts
     <> tryWakeupThreadFunction opts
@@ -517,6 +519,18 @@ rtsFunctionImports debug =
              externalModuleName = "GC",
              externalBaseName = "performGC",
              functionType = FunctionType {paramTypes = [], returnTypes = []}
+           },
+        FunctionImport
+           { internalName = "__asterius_die",
+             externalModuleName = "GC",
+             externalBaseName = "die",
+             functionType = FunctionType {paramTypes = [], returnTypes = []}
+           },
+         FunctionImport
+           { internalName = "__asterius_updateRemembSetPushClosure",
+             externalModuleName = "GC",
+             externalBaseName = "updateRemembSetPushClosure",
+             functionType = FunctionType {paramTypes = [I64], returnTypes = []}
            },
          FunctionImport
            { internalName = "__asterius_raiseExceptionHelper",
@@ -926,8 +940,10 @@ hsInitFunction,
   fromJSStringFunction,
   fromJSArrayFunction,
   threadPausedFunction,
+  updateRemembSetPushClosureFunction,
   dirtyMutVarFunction,
   dirtyMVarFunction,
+  updateMVarFunction,
   dirtyStackFunction,
   recordClosureMutatedFunction,
   raiseExceptionHelperFunction,
@@ -1433,20 +1449,28 @@ threadPausedFunction _ = runEDSL "threadPaused" $ do
   _ <- params [I64, I64]
   pure ()
 
+updateRemembSetPushClosureFunction _ = runEDSL "updateRemembSetPushClosure_" $ do
+  [p] <- params [I64]
+  callImport "__asterius_updateRemembSetPushClosure" [p]
+
 dirtyMutVarFunction _ = runEDSL "dirty_MUT_VAR" $ do
   [_, p] <- params [I64, I64]
-  if'
-    []
-    (loadI64 p 0 `eqInt64` symbol "stg_MUT_VAR_CLEAN_info")
-    (storeI64 p 0 $ symbol "stg_MUT_VAR_DIRTY_info")
-    mempty
+  callImport "__asterius_die" []
 
 dirtyMVarFunction _ = runEDSL "dirty_MVAR" $ do
   [_basereg, _mvar] <- params [I64, I64]
   mempty
+updateMVarFunction _ = runEDSL "update_MVAR" $ do 
+  [_, p, old] <- params [I64, I64, I64]
+  -- FIXME: IF_NONMOVING_WRITE_BARRIER_ENABLED
+  -- use nonmoving_write_barrier_enabled
+  callImport "__asterius_updateRemembSetPushClosure" [old]
+  callImport "__asterius_updateRemembSetPushClosure" [loadI64 p offset_StgMVar_head]
+  callImport "__asterius_updateRemembSetPushClosure" [loadI64 p offset_StgMVar_tail]
 
 dirtyStackFunction _ = runEDSL "dirty_STACK" $ do
   [cap, stack] <- params [I64, I64]
+  callImport "__asterius_updateRemembSetPushClosure" [stack]
   dirtySTACK cap stack
 
 recordClosureMutatedFunction _ = runEDSL "recordClosureMutated" $ do

@@ -948,3 +948,19 @@
     prim %memcpy(dst_p, src_p, n * SIZEOF_W, SIZEOF_W);        \
                                                                \
     return (dst);
+
+
+//
+// Nonmoving write barrier helpers
+//
+
+#define nonmoving_write_barrier_enabled 0
+#define IF_NONMOVING_WRITE_BARRIER_ENABLED                     \
+    if (nonmoving_write_barrier_enabled)
+
+// A useful helper for pushing a pointer to the update remembered set.
+#define updateRemembSetPushPtr(p)                                    \
+    IF_NONMOVING_WRITE_BARRIER_ENABLED {                             \
+      ccall updateRemembSetPushClosure_(p "ptr");     \
+    }
+
